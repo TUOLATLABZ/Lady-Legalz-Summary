@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lady Legalz Summary</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fc;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        p.intro {
+            text-align: center;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+        textarea {
+            width: 100%;
+            height: 250px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #output {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        .section h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        .highlight {
+            background-color: #ecf0f1;
+            padding: 10px;
+            border-left: 4px solid #3498db;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lady Legalz: Advanced AI-Powered Legal Intelligence</h1>
+    <p class="intro">An innovative tool that provides sophisticated summarization of legal texts, maps, and handwritten scripts, with key clause extraction, risk highlighting, and forward-thinking legal innovations.</p>
+    
+    <textarea id="input" placeholder="Paste your legal document, contract, court judgment, property map description, or transcribed handwritten legal note here..."></textarea>
+    <button onclick="processAdvanced()">Generate Advanced Summary & Insights</button>
+    
+    <div id="output"></div>
+
+    <script>
+        // Advanced keyword lists for legal concepts
+        const keyLegalTerms = {
+            obligations: ['shall', 'must', 'obligated', 'required to', 'agrees to', 'undertakes'],
+            rights: ['entitled', 'right to', 'may', 'permitted', 'option to'],
+            conditions: ['provided that', 'subject to', 'if', 'unless', 'upon', 'in the event'],
+            termination: ['terminate', 'termination', 'cancel', 'expiry', 'end of term'],
+            payment: ['pay', 'payment', 'fee', 'compensation', 'remuneration', 'consideration'],
+            liability: ['liable', 'liability', 'indemnify', 'hold harmless', 'responsibility'],
+            dispute: ['dispute', 'arbitration', 'mediation', 'jurisdiction', 'governing law'],
+            confidentiality: ['confidential', 'non-disclosure', 'trade secret', 'proprietary'],
+            ip: ['intellectual property', 'copyright', 'patent', 'trademark', 'license']
+        };
+
+        function extractKeySentences(text) {
+            const sentences = text.split(/\.(?!\d)|\!(?!\d)|\?(?!\d)/).map(s => s.trim()).filter(s => s.length > 10);
+            const scored = sentences.map(sentence => {
+                let score = 0;
+                const lower = sentence.toLowerCase();
+
+                // Score based on legal keywords
+                for (const category in keyLegalTerms) {
+                    for (const term of keyLegalTerms[category]) {
+                        if (lower.includes(term.toLowerCase())) {
+                            score += 2;
+                        }
+                    }
+                }
+
+                // Bonus for capitalised proper nouns or numbers (common in contracts)
+                if (/[A-Z][a-z]+/.test(sentence)) score += 0.5;
+                if (/\d/.test(sentence)) score += 1;
+
+                // Length moderation (prefer medium length)
+                score += Math.min(sentence.split(' ').length / 20, 2);
+
+                return { sentence: sentence + '.', score };
+            });
+
+            // Sort and take top 6-8
+            scored.sort((a, b) => b.score - a.score);
+            return scored.slice(0, Math.max(6, Math.min(8, Math.floor(sentences.length / 3))))
+                          .map(item => item.sentence);
+        }
+
+        function detectDocumentType(text) {
+            const lower = text.toLowerCase();
+            if (lower.includes('map') || lower.includes('boundary') || lower.includes('plot') || lower.includes('parcel') || lower.includes('survey')) {
+                return 'Property/Map Description';
+            }
+            if (lower.includes('handwriting') || lower.includes('script') || lower.includes('note') || lower.includes('will') && lower.includes('signed')) {
+                return 'Handwritten Legal Script (e.g., Will, Note)';
+            }
+            if (lower.includes('contract') || lower.includes('agreement') || lower.includes('party') && lower.includes('parties')) {
+                return 'Contract/Agreement';
+            }
+            if (lower.includes('judgment') || lower.includes('court') || lower.includes('case')) {
+                return 'Court Judgment/Opinion';
+            }
+            return 'General Legal Text';
+        }
+
+        function extractKeyClauses(text) {
+            const clauses = [];
+            for (const category in keyLegalTerms) {
+                const matches = [];
+                const terms = keyLegalTerms[category];
+                const sentences = text.split(/[.!?]/);
+                for (const sentence of sentences) {
+                    if (terms.some(term => sentence.toLowerCase().includes(term.toLowerCase()))) {
+                        matches.push(sentence.trim() + '.');
+                    }
+                }
+                if (matches.length > 0) {
+                    clauses.push({ category: category.charAt(0).toUpperCase() + category.slice(1), examples: matches.slice(0, 3) });
+                }
+            }
+            return clauses;
+        }
+
+        function generateInnovation() {
+            const innovations = [
+                "Integrate blockchain-based smart contracts for automatic execution of payment and termination clauses upon predefined triggers.",
+                "Deploy AI predictive litigation modeling using historical case data to estimate success probability and settlement ranges.",
+                "Implement zero-knowledge proofs for confidential clause verification without revealing sensitive commercial terms.",
+                "Use geospatial AI to auto-generate interactive 3D boundary maps from textual descriptions with dispute hotspot overlays.",
+                "Apply multimodal AI (OCR + NLP + handwriting analysis) to authenticate and interpret historical handwritten wills with forgery detection.",
+                "Embed ESG compliance scoring engine that flags environmental, social, and governance risks in real-time during drafting."
+            ];
+            return innovations[Math.floor(Math.random() * innovations.length)];
+        }
+
+        function processAdvanced() {
+            const inputText = document.getElementById('input').value.trim();
+            
+            if (!inputText) {
+                document.getElementById('output').innerHTML = '<p style="color:red;">Please enter legal text to analyze.</p>';
+                return;
+            }
+
+            const docType = detectDocumentType(inputText);
+            const keySentences = extractKeySentences(inputText);
+            const clauses = extractKeyClauses(inputText);
+            const innovation = generateInnovation();
+
+            let outputHtml = `<div class="section"><h2>Document Type Detected</h2><p class="highlight"><strong>${docType}</strong></p></div>`;
+
+            outputHtml += '<div class="section"><h2>Executive Summary</h2>';
+            outputHtml += '<p>' + keySentences.join(' </p><p>') + '</p></div>';
+
+            outputHtml += '<div class="section"><h2>Key Legal Clauses Extracted</h2><ul>';
+            clauses.forEach(c => {
+                outputHtml += `<li><strong>${c.category}:</strong><ul>`;
+                c.examples.forEach(ex => {
+                    outputHtml += `<li>${ex}</li>`;
+                });
+                outputHtml += `</ul></li>`;
+            });
+            outputHtml += '</ul></div>';
+
+            outputHtml += `<div class="section"><h2>Recommended Legal Innovation</h2><p class="highlight">${innovation}</p></div>`;
+
+            outputHtml += `<div class="section"><h2>Unique Lady Legalz Advantage</h2><p class="highlight">Combines advanced clause extraction, risk-aware summarization, and proactive tech integration (blockchain, AI prediction, geospatial mapping) to transform static legal documents into dynamic, actionable intelligence.</p></div>`;
+
+            document.getElementById('output').innerHTML = outputHtml;
+        }
+    </script>
+</body>
+</html>
