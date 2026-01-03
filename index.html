@@ -5,164 +5,206 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lady Legalz Summary</title>
     <style>
+        :root {
+            --primary-blue: #2c3e50;
+            --accent-blue: #3498db;
+            --light-bg: #f8f9fc;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             max-width: 900px;
             margin: 0 auto;
-            padding: 20px;
-            background-color: #f8f9fc;
+            padding: 40px 20px;
+            background-color: var(--light-bg);
             color: #333;
+            line-height: 1.6;
         }
+
         h1 {
             text-align: center;
-            color: #2c3e50;
+            color: var(--primary-blue);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
         }
+
         p.intro {
             text-align: center;
             font-size: 1.1em;
+            color: #666;
             margin-bottom: 30px;
         }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
         textarea {
             width: 100%;
-            height: 250px;
+            height: 200px;
             padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid #bdc3c7;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 16px;
             box-sizing: border-box;
+            transition: border-color 0.3s ease;
+            resize: vertical;
         }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
         button {
             display: block;
             width: 100%;
-            padding: 14px;
-            background-color: #3498db;
+            padding: 16px;
+            background-color: var(--accent-blue);
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 18px;
             font-weight: bold;
+            transition: background 0.3s ease;
         }
+
         button:hover {
             background-color: #2980b9;
         }
+
         #output {
             margin-top: 30px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
+
         .section {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
+            animation: fadeIn 0.5s ease;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .section h2 {
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
+            color: var(--primary-blue);
+            border-bottom: 3px solid var(--accent-blue);
             padding-bottom: 8px;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
         }
-        ul {
-            padding-left: 20px;
-        }
-        li {
-            margin-bottom: 8px;
-            line-height: 1.6;
-        }
+
         .highlight {
-            background-color: #ecf0f1;
-            padding: 10px;
-            border-left: 4px solid #3498db;
+            background-color: #f0f7fd;
+            padding: 15px;
+            border-left: 5px solid var(--accent-blue);
             margin: 10px 0;
             border-radius: 4px;
+            font-style: italic;
+        }
+
+        ul {
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <h1>Lady Legalz: Advanced AI-Powered Legal Intelligence</h1>
-    <p class="intro">An innovative tool that provides sophisticated summarization of legal texts, maps, and handwritten scripts, with key clause extraction, risk highlighting, and forward-thinking legal innovations.</p>
+
+    <h1>Lady Legalz Intelligence</h1>
+    <p class="intro">Sophisticated summarization, clause extraction, and legal innovation forecasting.</p>
     
-    <textarea id="input" placeholder="Paste your legal document, contract, court judgment, property map description, or transcribed handwritten legal note here..."></textarea>
-    <button onclick="processAdvanced()">Generate Advanced Summary & Insights</button>
-    
-    <div id="output"></div>
+    <div class="container">
+        <textarea id="input" placeholder="Paste your contract, court judgment, property description, or legal notes here..."></textarea>
+        <button onclick="processAdvanced()">Generate Advanced Summary & Insights</button>
+        
+        <div id="output"></div>
+    </div>
 
     <script>
-        // Advanced keyword lists for legal concepts
         const keyLegalTerms = {
             obligations: ['shall', 'must', 'obligated', 'required to', 'agrees to', 'undertakes'],
             rights: ['entitled', 'right to', 'may', 'permitted', 'option to'],
-            conditions: ['provided that', 'subject to', 'if', 'unless', 'upon', 'in the event'],
-            termination: ['terminate', 'termination', 'cancel', 'expiry', 'end of term'],
+            conditions: ['provided that', 'subject to', 'unless', 'upon', 'in the event'],
+            termination: ['terminate', 'termination', 'cancel', 'expiry', 'rescind'],
             payment: ['pay', 'payment', 'fee', 'compensation', 'remuneration', 'consideration'],
-            liability: ['liable', 'liability', 'indemnify', 'hold harmless', 'responsibility'],
-            dispute: ['dispute', 'arbitration', 'mediation', 'jurisdiction', 'governing law'],
+            liability: ['liable', 'liability', 'indemnify', 'hold harmless', 'damages'],
+            dispute: ['dispute', 'arbitration', 'mediation', 'jurisdiction', 'venue'],
             confidentiality: ['confidential', 'non-disclosure', 'trade secret', 'proprietary'],
             ip: ['intellectual property', 'copyright', 'patent', 'trademark', 'license']
         };
 
         function extractKeySentences(text) {
-            const sentences = text.split(/\.(?!\d)|\!(?!\d)|\?(?!\d)/).map(s => s.trim()).filter(s => s.length > 10);
-            const scored = sentences.map(sentence => {
+            // Improved regex to handle common legal abbreviations without breaking sentences
+            const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+            const cleanSentences = sentences.map(s => s.trim()).filter(s => s.length > 20);
+            
+            const scored = cleanSentences.map(sentence => {
                 let score = 0;
                 const lower = sentence.toLowerCase();
 
-                // Score based on legal keywords
                 for (const category in keyLegalTerms) {
-                    for (const term of keyLegalTerms[category]) {
-                        if (lower.includes(term.toLowerCase())) {
-                            score += 2;
-                        }
-                    }
+                    keyLegalTerms[category].forEach(term => {
+                        if (lower.includes(term)) score += 2;
+                    });
                 }
 
-                // Bonus for capitalised proper nouns or numbers (common in contracts)
-                if (/[A-Z][a-z]+/.test(sentence)) score += 0.5;
-                if (/\d/.test(sentence)) score += 1;
-
-                // Length moderation (prefer medium length)
-                score += Math.min(sentence.split(' ').length / 20, 2);
-
-                return { sentence: sentence + '.', score };
+                if (/[A-Z]{2,}/.test(sentence)) score += 1; // Bonus for acronyms/caps
+                if (/\d/.test(sentence)) score += 1; // Bonus for dates/amounts
+                
+                return { sentence, score };
             });
 
-            // Sort and take top 6-8
-            scored.sort((a, b) => b.score - a.score);
-            return scored.slice(0, Math.max(6, Math.min(8, Math.floor(sentences.length / 3))))
-                          .map(item => item.sentence);
+            return scored
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 6)
+                .map(item => item.sentence);
         }
 
         function detectDocumentType(text) {
             const lower = text.toLowerCase();
-            if (lower.includes('map') || lower.includes('boundary') || lower.includes('plot') || lower.includes('parcel') || lower.includes('survey')) {
-                return 'Property/Map Description';
-            }
-            if (lower.includes('handwriting') || lower.includes('script') || lower.includes('note') || lower.includes('will') && lower.includes('signed')) {
-                return 'Handwritten Legal Script (e.g., Will, Note)';
-            }
-            if (lower.includes('contract') || lower.includes('agreement') || lower.includes('party') && lower.includes('parties')) {
-                return 'Contract/Agreement';
-            }
-            if (lower.includes('judgment') || lower.includes('court') || lower.includes('case')) {
-                return 'Court Judgment/Opinion';
-            }
+            if (lower.includes('map') || lower.includes('boundary') || lower.includes('parcel')) return 'Property/Map Description';
+            if (lower.includes('will') || lower.includes('testament') || lower.includes('bequeath')) return 'Testamentary Document (Will)';
+            if (lower.includes('judgment') || lower.includes('decree') || lower.includes('ordered')) return 'Court Judgment/Opinion';
+            if (lower.includes('agreement') || lower.includes('contract')) return 'Contractual Agreement';
             return 'General Legal Text';
         }
 
         function extractKeyClauses(text) {
             const clauses = [];
+            const sentences = text.split(/[.!?]/);
+
             for (const category in keyLegalTerms) {
                 const matches = [];
                 const terms = keyLegalTerms[category];
-                const sentences = text.split(/[.!?]/);
-                for (const sentence of sentences) {
-                    if (terms.some(term => sentence.toLowerCase().includes(term.toLowerCase()))) {
-                        matches.push(sentence.trim() + '.');
+                
+                sentences.forEach(sentence => {
+                    if (terms.some(term => sentence.toLowerCase().includes(term))) {
+                        if (matches.length < 2) matches.push(sentence.trim() + '.');
                     }
-                }
+                });
+
                 if (matches.length > 0) {
-                    clauses.push({ category: category.charAt(0).toUpperCase() + category.slice(1), examples: matches.slice(0, 3) });
+                    clauses.push({ 
+                        category: category.charAt(0).toUpperCase() + category.slice(1), 
+                        examples: matches 
+                    });
                 }
             }
             return clauses;
@@ -170,49 +212,64 @@
 
         function generateInnovation() {
             const innovations = [
-                "Integrate blockchain-based smart contracts for automatic execution of payment and termination clauses upon predefined triggers.",
-                "Deploy AI predictive litigation modeling using historical case data to estimate success probability and settlement ranges.",
-                "Implement zero-knowledge proofs for confidential clause verification without revealing sensitive commercial terms.",
-                "Use geospatial AI to auto-generate interactive 3D boundary maps from textual descriptions with dispute hotspot overlays.",
-                "Apply multimodal AI (OCR + NLP + handwriting analysis) to authenticate and interpret historical handwritten wills with forgery detection.",
-                "Embed ESG compliance scoring engine that flags environmental, social, and governance risks in real-time during drafting."
+                "Integrate blockchain smart contracts for automatic escrow release upon delivery confirmation.",
+                "Deploy AI predictive modeling to estimate settlement ranges based on regional court precedents.",
+                "Implement Zero-Knowledge Proofs (ZKP) to verify financial standing without sharing bank statements.",
+                "Use Geospatial AI to sync property descriptions directly with Land Registry satellite data.",
+                "Embed real-time ESG compliance flagging to monitor supply chain regulatory shifts."
             ];
             return innovations[Math.floor(Math.random() * innovations.length)];
         }
 
         function processAdvanced() {
-            const inputText = document.getElementById('input').value.trim();
+            const inputEl = document.getElementById('input');
+            const outputEl = document.getElementById('output');
+            const text = inputEl.value.trim();
             
-            if (!inputText) {
-                document.getElementById('output').innerHTML = '<p style="color:red;">Please enter legal text to analyze.</p>';
+            if (!text) {
+                outputEl.innerHTML = '<p class="error">Please enter legal text to analyze.</p>';
                 return;
             }
 
-            const docType = detectDocumentType(inputText);
-            const keySentences = extractKeySentences(inputText);
-            const clauses = extractKeyClauses(inputText);
-            const innovation = generateInnovation();
+            // Processing UI
+            outputEl.innerHTML = '<p style="text-align:center;">Analyzing legal architecture...</p>';
 
-            let outputHtml = `<div class="section"><h2>Document Type Detected</h2><p class="highlight"><strong>${docType}</strong></p></div>`;
+            setTimeout(() => {
+                const docType = detectDocumentType(text);
+                const summary = extractKeySentences(text);
+                const clauses = extractKeyClauses(text);
+                const innovation = generateInnovation();
 
-            outputHtml += '<div class="section"><h2>Executive Summary</h2>';
-            outputHtml += '<p>' + keySentences.join(' </p><p>') + '</p></div>';
+                let html = `
+                    <div class="section">
+                        <h2>Document Analysis</h2>
+                        <p class="highlight"><strong>Classification:</strong> ${docType}</p>
+                    </div>
 
-            outputHtml += '<div class="section"><h2>Key Legal Clauses Extracted</h2><ul>';
-            clauses.forEach(c => {
-                outputHtml += `<li><strong>${c.category}:</strong><ul>`;
-                c.examples.forEach(ex => {
-                    outputHtml += `<li>${ex}</li>`;
-                });
-                outputHtml += `</ul></li>`;
-            });
-            outputHtml += '</ul></div>';
+                    <div class="section">
+                        <h2>Executive Summary</h2>
+                        <p>${summary.join(' ')}</p>
+                    </div>
 
-            outputHtml += `<div class="section"><h2>Recommended Legal Innovation</h2><p class="highlight">${innovation}</p></div>`;
+                    <div class="section">
+                        <h2>Critical Clause Extraction</h2>
+                        <ul>
+                            ${clauses.map(c => `
+                                <li><strong>${c.category}:</strong> 
+                                    <ul>${c.examples.map(ex => `<li>${ex}</li>`).join('')}</ul>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
 
-            outputHtml += `<div class="section"><h2>Unique Lady Legalz Advantage</h2><p class="highlight">Combines advanced clause extraction, risk-aware summarization, and proactive tech integration (blockchain, AI prediction, geospatial mapping) to transform static legal documents into dynamic, actionable intelligence.</p></div>`;
+                    <div class="section">
+                        <h2>Lady Legalz Strategic Innovation</h2>
+                        <p class="highlight">${innovation}</p>
+                    </div>
+                `;
 
-            document.getElementById('output').innerHTML = outputHtml;
+                outputEl.innerHTML = html;
+            }, 500); // Slight delay to simulate AI processing
         }
     </script>
 </body>
