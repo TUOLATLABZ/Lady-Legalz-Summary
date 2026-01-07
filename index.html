@@ -3,274 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lady Legalz Summary</title>
+    <title>Lady Legalz Summary Beta v3.9.1</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <style>
         :root {
-            --primary-blue: #2c3e50;
-            --accent-blue: #3498db;
-            --light-bg: #f8f9fc;
-            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --primary: #1a2a3a; --accent: #3498db; --risk-low: #27ae60;
+            --risk-med: #f39c12; --risk-high: #e74c3c; --bg: #f0f2f5; --warning: #d35400;
         }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: #333; line-height: 1.6; padding: 20px; }
+        .wrapper { max-width: 1200px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        
+        .header-area { text-align: center; border-bottom: 2px solid #eee; margin-bottom: 30px; padding-bottom: 20px; }
+        h1 { color: var(--primary); margin: 0; font-size: 2.8em; letter-spacing: -1px; }
+        
+        .upload-container { margin-bottom: 15px; padding: 15px; border: 2px dashed #cbd5e1; border-radius: 12px; text-align: center; background: #f8fafc; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            background-color: var(--light-bg);
-            color: #333;
-            line-height: 1.6;
-        }
+        textarea { width: 100%; height: 200px; border: 2px solid #dfe6e9; border-radius: 12px; padding: 20px; font-size: 16px; transition: all 0.3s; box-sizing: border-box; font-family: 'Courier New', monospace; resize: vertical; }
+        textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1); outline: none; }
+        
+        .btn-group { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; margin-top: 15px; }
+        button { padding: 15px 25px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        button:hover { background: #2c3e50; transform: translateY(-1px); }
+        .secondary-btn { background: var(--accent); }
+        .download-btn { background: #27ae60; }
 
-        h1 {
-            text-align: center;
-            color: var(--primary-blue);
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-        }
+        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 30px; animation: fadeIn 0.5s ease; }
+        .full-width { grid-column: 1 / -1; }
 
-        p.intro {
-            text-align: center;
-            font-size: 1.1em;
-            color: #666;
-            margin-bottom: 30px;
-        }
+        .section { background: #fff; border: 1px solid #edf2f7; padding: 25px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .section h2 { margin-top: 0; color: var(--primary); font-size: 1.1em; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
 
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-        }
+        .risk-meter { height: 12px; background: #eee; border-radius: 6px; overflow: hidden; margin: 15px 0; }
+        .risk-fill { height: 100%; width: 0%; transition: width 0.8s ease; }
+        
+        .glossary-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 10px; border-radius: 6px; font-size: 0.85em; }
+        .tag b { color: var(--accent); }
 
-        textarea {
-            width: 100%;
-            height: 200px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            box-sizing: border-box;
-            transition: border-color 0.3s ease;
-            resize: vertical;
-        }
+        .summary-list { padding-left: 20px; margin: 0; font-size: 0.95em; }
+        .summary-list li { margin-bottom: 8px; color: #444; }
+        
+        .coi-box { background: #fff3e0; border: 1px solid #ffe0b2; color: #e65100; padding: 10px; border-radius: 6px; font-size: 0.9em; margin-top: 10px; display: none; }
+        .party-tag { display: inline-block; background: #eef2ff; color: #4f46e5; padding: 4px 10px; border-radius: 20px; font-weight: bold; margin-right: 5px; }
 
-        textarea:focus {
-            outline: none;
-            border-color: var(--accent-blue);
-        }
-
-        button {
-            display: block;
-            width: 100%;
-            padding: 16px;
-            background-color: var(--accent-blue);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
-            transition: background 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        #output {
-            margin-top: 30px;
-        }
-
-        .section {
-            margin-bottom: 30px;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .section h2 {
-            color: var(--primary-blue);
-            border-bottom: 3px solid var(--accent-blue);
-            padding-bottom: 8px;
-            margin-bottom: 15px;
-            font-size: 1.4rem;
-        }
-
-        .highlight {
-            background-color: #f0f7fd;
-            padding: 15px;
-            border-left: 5px solid var(--accent-blue);
-            margin: 10px 0;
-            border-radius: 4px;
-            font-style: italic;
-        }
-
-        ul {
-            padding-left: 25px;
-        }
-
-        li {
-            margin-bottom: 10px;
-        }
-
-        .error {
-            color: #e74c3c;
-            text-align: center;
-            font-weight: bold;
-        }
+        #loading { display: none; color: var(--accent); font-weight: bold; margin-bottom: 10px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <h1>Lady Legalz Intelligence</h1>
-    <p class="intro">Sophisticated summarization, clause extraction, and legal innovation forecasting.</p>
-    
-    <div class="container">
-        <textarea id="input" placeholder="Paste your contract, court judgment, property description, or legal notes here..."></textarea>
-        <button onclick="processAdvanced()">Generate Advanced Summary & Insights</button>
-        
-        <div id="output"></div>
+<div class="wrapper">
+    <div class="header-area">
+        <h1>Lady Legalz Beta v4.0.0</h1>
+        <p>TUOLATLABZ 2026 | Lady Legalz Summary | Legal Analyzer</p>
     </div>
 
-    <script>
-        const keyLegalTerms = {
-            obligations: ['shall', 'must', 'obligated', 'required to', 'agrees to', 'undertakes'],
-            rights: ['entitled', 'right to', 'may', 'permitted', 'option to'],
-            conditions: ['provided that', 'subject to', 'unless', 'upon', 'in the event'],
-            termination: ['terminate', 'termination', 'cancel', 'expiry', 'rescind'],
-            payment: ['pay', 'payment', 'fee', 'compensation', 'remuneration', 'consideration'],
-            liability: ['liable', 'liability', 'indemnify', 'hold harmless', 'damages'],
-            dispute: ['dispute', 'arbitration', 'mediation', 'jurisdiction', 'venue'],
-            confidentiality: ['confidential', 'non-disclosure', 'trade secret', 'proprietary'],
-            ip: ['intellectual property', 'copyright', 'patent', 'trademark', 'license']
-        };
+    <div class="upload-container">
+        <strong>Direct PDF Analysis</strong><br>
+        <input type="file" id="fileInput" accept="application/pdf">
+        <div id="loading">Processing Document Data...</div>
+    </div>
 
-        function extractKeySentences(text) {
-            // Improved regex to handle common legal abbreviations without breaking sentences
-            const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
-            const cleanSentences = sentences.map(s => s.trim()).filter(s => s.length > 20);
-            
-            const scored = cleanSentences.map(sentence => {
-                let score = 0;
-                const lower = sentence.toLowerCase();
+    <textarea id="input" placeholder="Paste legal text here or upload a PDF..."></textarea>
+    
+    <div class="btn-group">
+        <button onclick="analyzeText()">Execute Analysis</button>
+        <button class="download-btn" onclick="downloadReport()">Download Brief</button>
+        <button class="secondary-btn" onclick="clearAll()">Clear</button>
+    </div>
 
-                for (const category in keyLegalTerms) {
-                    keyLegalTerms[category].forEach(term => {
-                        if (lower.includes(term)) score += 2;
-                    });
-                }
+    <div id="output" class="results-grid" style="display:none;">
+        <div class="section">
+            <h2>Counter-Party Intelligence</h2>
+            <div id="partyDisplay">Scanning...</div>
+            <div id="coiFlag" class="coi-box"><b>⚠️ CONFLICT WARNING:</b> Restrictive covenants detected (Exclusivity or Non-Compete). Review legal autonomy.</div>
+        </div>
 
-                if (/[A-Z]{2,}/.test(sentence)) score += 1; // Bonus for acronyms/caps
-                if (/\d/.test(sentence)) score += 1; // Bonus for dates/amounts
-                
-                return { sentence, score };
-            });
+        <div class="section">
+            <h2>Risk Assessment</h2>
+            <div id="riskLabel">Calculating...</div>
+            <div class="risk-meter"><div id="riskFill" class="risk-fill"></div></div>
+            <p id="riskDesc" style="font-size: 0.85em; color: #666;"></p>
+        </div>
 
-            return scored
-                .sort((a, b) => b.score - a.score)
-                .slice(0, 6)
-                .map(item => item.sentence);
-        }
+        <div class="section full-width">
+            <h2>Strategic Summarizer</h2>
+            <ul id="summaryList" class="summary-list"></ul>
+        </div>
 
-        function detectDocumentType(text) {
-            const lower = text.toLowerCase();
-            if (lower.includes('map') || lower.includes('boundary') || lower.includes('parcel')) return 'Property/Map Description';
-            if (lower.includes('will') || lower.includes('testament') || lower.includes('bequeath')) return 'Testamentary Document (Will)';
-            if (lower.includes('judgment') || lower.includes('decree') || lower.includes('ordered')) return 'Court Judgment/Opinion';
-            if (lower.includes('agreement') || lower.includes('contract')) return 'Contractual Agreement';
-            return 'General Legal Text';
-        }
+        <div class="section full-width">
+            <h2>Master Glossary Decoder</h2>
+            <div id="glossaryDisplay" class="glossary-tags"></div>
+        </div>
+    </div>
+</div>
 
-        function extractKeyClauses(text) {
-            const clauses = [];
-            const sentences = text.split(/[.!?]/);
+<script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
-            for (const category in keyLegalTerms) {
-                const matches = [];
-                const terms = keyLegalTerms[category];
-                
-                sentences.forEach(sentence => {
-                    if (terms.some(term => sentence.toLowerCase().includes(term))) {
-                        if (matches.length < 2) matches.push(sentence.trim() + '.');
-                    }
-                });
+    const masterGlossary = {
+        'ab initio': 'From the beginning.',
+        'ad idem': 'In agreement.',
+        'caveat emptor': 'Let the buyer beware.',
+        'consideration': 'Something of value exchanged in a contract.',
+        'estoppel': 'A legal bar preventing someone from arguing something contrary to a previous statement.',
+        'force majeure': 'Act of God / Unforeseeable circumstances.',
+        'indemnity': 'Security against financial loss or burden.',
+        'liquidated': 'Fixed or determined damages.',
+        'privity': 'Direct relationship between parties to a contract.',
+        'quantum meruit': 'The actual value of services performed.',
+        'rescission': 'Unwinding a contract back to its start.',
+        'ultra vires': 'Beyond one’s legal power or authority.',
+        'easement': 'Right to use another’s land for a specific purpose.',
+        'encumbrance': 'A claim or liability attached to property.',
+        'freehold': 'Permanent and absolute tenure of land.',
+        'lien': 'Right to keep possession of property until debt is paid.',
+        'usufruct': 'Right to enjoy the use and advantages of another\'s property.',
+        'affidavit': 'Written statement confirmed by oath.',
+        'amicus curiae': 'Friend of the court; impartial adviser.',
+        'certiorari': 'Higher court reviewing a lower court’s decision.',
+        'de facto': 'In fact, whether by right or not.',
+        'in camera': 'In private / Judge’s chambers.',
+        'injunction': 'Court order to do or stop doing something.',
+        'inter alia': 'Among other things.',
+        'locus standi': 'Right to bring an action to court.',
+        'mutatis mutandis': 'With the necessary changes made.',
+        'nolo contendere': 'I do not wish to contend.',
+        'prima facie': 'Accepted as correct until proven otherwise.',
+        'res judicata': 'A matter already judged.',
+        'sub judice': 'Under judicial consideration.',
+        'tort': 'A wrongful act leading to civil liability.',
+        'voir dire': 'Preliminary examination of a witness or juror.',
+        'ipso facto': 'By the fact itself.',
+        'mens rea': 'Guilty mind; criminal intent.',
+        'habeas corpus': 'Requirement to bring a person under arrest before a judge.',
+        'pro bono': 'Work undertaken without charge.',
+        'severability': 'Allows other parts of a contract to remain valid if one part is void.',
+        'force majeure': 'Unforeseeable circumstances that prevent someone from fulfilling a contract.'
+    };
 
-                if (matches.length > 0) {
-                    clauses.push({ 
-                        category: category.charAt(0).toUpperCase() + category.slice(1), 
-                        examples: matches 
-                    });
-                }
+    document.getElementById('fileInput').addEventListener('change', async function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const loading = document.getElementById('loading');
+        loading.style.display = 'block';
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+            let fullText = "";
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const textContent = await page.getTextContent();
+                fullText += textContent.items.map(item => item.str).join(" ") + "\n";
             }
-            return clauses;
+            document.getElementById('input').value = fullText;
+            loading.style.display = 'none';
+        } catch (error) {
+            alert("Error parsing PDF.");
+            loading.style.display = 'none';
         }
+    });
 
-        function generateInnovation() {
-            const innovations = [
-                "Integrate blockchain smart contracts for automatic escrow release upon delivery confirmation.",
-                "Deploy AI predictive modeling to estimate settlement ranges based on regional court precedents.",
-                "Implement Zero-Knowledge Proofs (ZKP) to verify financial standing without sharing bank statements.",
-                "Use Geospatial AI to sync property descriptions directly with Land Registry satellite data.",
-                "Embed real-time ESG compliance flagging to monitor supply chain regulatory shifts."
-            ];
-            return innovations[Math.floor(Math.random() * innovations.length)];
-        }
+    function analyzeText() {
+        const text = document.getElementById('input').value.trim();
+        if (!text) return;
+        document.getElementById('output').style.display = 'grid';
 
-        function processAdvanced() {
-            const inputEl = document.getElementById('input');
-            const outputEl = document.getElementById('output');
-            const text = inputEl.value.trim();
-            
-            if (!text) {
-                outputEl.innerHTML = '<p class="error">Please enter legal text to analyze.</p>';
-                return;
+        // 1. COUNTER-PARTY & COI
+        const partyRegex = /([A-Z][\w\s&]+ (LLC|Corp|Inc|Ltd|Limited|Partnership|Group|Company|Associates))/g;
+        const entities = [...new Set(text.match(partyRegex))];
+        document.getElementById('partyDisplay').innerHTML = entities.length > 0 
+            ? entities.map(m => `<span class="party-tag">${m}</span>`).join('') 
+            : "No entities detected.";
+        
+        const coiKeywords = ['exclusive', 'non-compete', 'conflict of interest', 'restrictive covenant', 'assigns all rights'];
+        const hasCoi = coiKeywords.some(k => text.toLowerCase().includes(k));
+        document.getElementById('coiFlag').style.display = hasCoi ? 'block' : 'none';
+
+        // 2. RISK METER
+        const riskTerms = ['breach', 'liable', 'termination', 'indemnify', 'liquidated', 'penalty', 'default', 'litigation', 'waive', 'arbitration'];
+        let score = 0;
+        riskTerms.forEach(term => {
+            const matches = text.toLowerCase().match(new RegExp('\\b' + term + '\\b', 'g'));
+            if(matches) score += matches.length;
+        });
+        const fill = document.getElementById('riskFill');
+        const label = document.getElementById('riskLabel');
+        let percent = Math.min((score / 15) * 100, 100);
+        setTimeout(() => { fill.style.width = percent + '%'; }, 50);
+        fill.style.backgroundColor = percent > 70 ? 'var(--risk-high)' : (percent > 30 ? 'var(--risk-med)' : 'var(--risk-low)');
+        label.innerHTML = `<b>${percent > 70 ? 'HIGH' : (percent > 30 ? 'MEDIUM' : 'LOW')} RISK</b>`;
+
+        // 3. STRATEGIC SUMMARIZER
+        const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+        const summaryList = document.getElementById('summaryList');
+        summaryList.innerHTML = '';
+        const keyPhrases = ['shall', 'must', 'agrees to', 'payment', 'confidential', 'notice', 'right of', 'intellectual property'];
+        sentences.filter(s => keyPhrases.some(k => s.toLowerCase().includes(k))).slice(0, 7).forEach(s => {
+            const li = document.createElement('li');
+            li.innerText = s.trim();
+            summaryList.appendChild(li);
+        });
+
+        // 4. GLOSSARY
+        let tagsHtml = '';
+        for (const [term, def] of Object.entries(masterGlossary)) {
+            if (text.toLowerCase().includes(term.toLowerCase())) {
+                tagsHtml += `<div class="tag"><b>${term.toUpperCase()}</b>: ${def}</div>`;
             }
-
-            // Processing UI
-            outputEl.innerHTML = '<p style="text-align:center;">Analyzing legal architecture...</p>';
-
-            setTimeout(() => {
-                const docType = detectDocumentType(text);
-                const summary = extractKeySentences(text);
-                const clauses = extractKeyClauses(text);
-                const innovation = generateInnovation();
-
-                let html = `
-                    <div class="section">
-                        <h2>Document Analysis</h2>
-                        <p class="highlight"><strong>Classification:</strong> ${docType}</p>
-                    </div>
-
-                    <div class="section">
-                        <h2>Executive Summary</h2>
-                        <p>${summary.join(' ')}</p>
-                    </div>
-
-                    <div class="section">
-                        <h2>Critical Clause Extraction</h2>
-                        <ul>
-                            ${clauses.map(c => `
-                                <li><strong>${c.category}:</strong> 
-                                    <ul>${c.examples.map(ex => `<li>${ex}</li>`).join('')}</ul>
-                                </li>
-                            `).join('')}
-                        </ul>
-                    </div>
-
-                    <div class="section">
-                        <h2>Lady Legalz Strategic Innovation</h2>
-                        <p class="highlight">${innovation}</p>
-                    </div>
-                `;
-
-                outputEl.innerHTML = html;
-            }, 500); // Slight delay to simulate AI processing
         }
-    </script>
+        document.getElementById('glossaryDisplay').innerHTML = tagsHtml || 'No jargon detected.';
+        
+        document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function downloadReport() {
+        const risk = document.getElementById('riskLabel').innerText;
+        const summary = Array.from(document.querySelectorAll('#summaryList li')).map(li => "• " + li.innerText).join('\n');
+        const content = `LADY LEGALZ SUMMARY INTELLIGENCE REPORT\n==============================\n\nRISK PROFILE: ${risk}\n\nSTRATEGIC CLAUSES:\n${summary}\n\n--- End of Report ---`;
+        const blob = new Blob([content], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'Analysis_Report.txt';
+        a.click();
+    }
+
+    function clearAll() {
+        document.getElementById('input').value = '';
+        document.getElementById('fileInput').value = '';
+        document.getElementById('output').style.display = 'none';
+        document.getElementById('riskFill').style.width = '0%';
+    }
+</script>
 </body>
 </html>
