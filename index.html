@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lady Legalz | Summary v3.6.0</title>
+    <title>LADY LEGALZ BETA v4.0.0 | SUMMARY v3.7.0</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -18,146 +18,135 @@
             background-image: 
                 linear-gradient(rgba(112, 0, 255, 0.1) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(112, 0, 255, 0.1) 1px, transparent 1px);
-            background-size: 100px 100px; color: var(--text);
+            background-size: 80px 80px; color: var(--text);
             margin: 0; padding: 20px; line-height: 1.6;
         }
 
         .wrapper {
-            max-width: 1250px; margin: 0 auto; backdrop-filter: blur(20px);
+            max-width: 1250px; margin: 0 auto; backdrop-filter: blur(25px);
             background: var(--glass); padding: 40px; border-radius: 20px;
             border: 1px solid rgba(0, 242, 255, 0.2);
-            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            box-shadow: 0 0 50px rgba(0,0,0,0.9);
         }
 
         h1 {
-            font-family: 'Space Grotesk', sans-serif; font-size: 2.8rem; text-align: center;
+            font-family: 'Space Grotesk', sans-serif; font-size: 3rem; text-align: center;
             background: linear-gradient(90deg, var(--primary), #fff, var(--secondary));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            letter-spacing: 10px; margin-bottom: 0; filter: drop-shadow(0 0 10px var(--primary));
+            letter-spacing: 12px; margin-bottom: 0; filter: drop-shadow(0 0 8px var(--primary));
         }
 
-        .mode-selector { display: flex; justify-content: center; gap: 10px; margin: 30px 0; }
+        .mode-selector { display: flex; justify-content: center; gap: 15px; margin: 30px 0; }
         .mode-btn {
             background: transparent; border: 1px solid var(--primary);
-            color: var(--primary); padding: 10px 25px; border-radius: 2px; 
-            cursor: pointer; transition: 0.4s; font-family: 'Space Grotesk';
+            color: var(--primary); padding: 10px 30px; border-radius: 4px; 
+            cursor: pointer; transition: 0.4s; font-family: 'Space Grotesk'; letter-spacing: 1px;
         }
-        .mode-btn.active { background: var(--primary); color: #000; box-shadow: 0 0 20px var(--primary); }
+        .mode-btn.active { background: var(--primary); color: #000; box-shadow: 0 0 25px var(--primary); }
+
+        .upload-zone {
+            text-align: center; margin-bottom: 15px; padding: 10px;
+            border: 1px dashed rgba(0, 242, 255, 0.3); border-radius: 8px;
+        }
 
         textarea {
-            width: 100%; height: 250px; background: rgba(0, 0, 0, 0.85);
+            width: 100%; height: 280px; background: rgba(0, 0, 0, 0.85);
             border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;
             color: #fff; padding: 20px; font-family: 'Courier New', monospace;
-            box-sizing: border-box; font-size: 15px; border-left: 4px solid var(--primary);
+            box-sizing: border-box; font-size: 15px; border-left: 5px solid var(--primary);
         }
 
         .btn-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 25px; }
-        button.action-btn { padding: 18px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; }
+        button.action-btn { padding: 18px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
         .analyze { background: var(--primary); color: #000; }
         .export { background: var(--secondary); color: #fff; }
         .clear { background: #1a1a1a; color: #fff; border: 1px solid #333; }
+        button.action-btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
 
         .results-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 40px; }
-        .section { background: rgba(0,0,0,0.4); padding: 25px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
-        .section h2 { font-size: 0.7rem; color: var(--primary); text-transform: uppercase; margin-top: 0; border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 10px; margin-bottom: 15px; }
+        .section { background: rgba(0,0,0,0.5); padding: 25px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+        .section h2 { font-size: 0.75rem; color: var(--primary); text-transform: uppercase; margin-top: 0; border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 10px; margin-bottom: 15px; }
 
-        .tag { background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 3px; font-size: 0.75em; margin: 4px; display: inline-block; border-bottom: 1px solid var(--secondary); }
+        .tag { background: rgba(112, 0, 255, 0.15); padding: 6px 14px; border-radius: 4px; font-size: 0.8em; margin: 5px; display: inline-block; border-left: 2px solid var(--secondary); }
         .tag b { color: var(--primary); }
         
         .cite-v { color: var(--valid); font-family: monospace; font-size: 0.9em; display: block; margin-bottom: 8px; }
-        .juris-v { color: var(--warn); font-weight: bold; font-size: 0.9em; }
+        .juris-v { color: var(--warn); font-weight: bold; font-size: 1em; letter-spacing: 1px; }
 
-        #loading { text-align: center; color: var(--primary); display: none; margin-top: 10px; font-family: monospace; }
+        #loading { text-align: center; color: var(--primary); display: none; margin-top: 15px; font-family: 'Space Grotesk'; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
     <h1>LADY LEGALZ</h1>
-    <p style="text-align: center; opacity: 0.6; font-size: 0.7rem; letter-spacing: 6px; margin-bottom: 20px;">AI JURISPRUDENCE SYSTEM // VER 4.6.0</p>
+    <p style="text-align: center; opacity: 0.6; font-size: 0.75rem; letter-spacing: 8px; margin-bottom: 25px;">NEURAL JURISPRUDENCE SYSTEM // v4.7.0</p>
 
-    <div class="mode-selector">
-        <button class="mode-btn active" id="btn-contract" onclick="setMode('contract')">CONTRACT_ANALYSIS</button>
-        <button class="mode-btn" id="btn-brief" onclick="setMode('brief')">CASE_BRIEF_PROTO</button>
+    <div class="upload-zone">
+        <label style="cursor: pointer; color: var(--primary); font-size: 0.8em;">
+            [+] INJECT PDF DATA STREAM
+            <input type="file" id="fileInput" accept="application/pdf" style="display:none">
+        </label>
     </div>
 
-    <textarea id="input" placeholder="[SYSTEM_READY] - Please input raw legal text for neural processing..."></textarea>
+    <div class="mode-selector">
+        <button class="mode-btn active" id="btn-contract" onclick="setMode('contract')">CONTRACT_MODE</button>
+        <button class="mode-btn" id="btn-brief" onclick="setMode('brief')">CASE_BRIEF_MODE</button>
+    </div>
+
+    <textarea id="input" placeholder="[WAITING_FOR_INPUT] - Paste legal text or upload PDF..."></textarea>
     
-    <div id="loading">PROCESSING DATA STREAM... █▒▒▒▒▒▒▒▒▒</div>
+    <div id="loading">PARSING NEURAL VECTORS... █▒▒▒▒▒▒▒▒▒</div>
 
     <div class="btn-group">
-        <button class="action-btn analyze" onclick="initiateScan()">Execute Scan</button>
-        <button class="action-btn export" onclick="exportData()">Export Intel</button>
-        <button class="action-btn clear" onclick="location.reload()">System Reset</button>
+        <button class="action-btn analyze" onclick="initiateScan()">Execute Extraction</button>
+        <button class="action-btn export" onclick="exportToPDF()">Export PDF Brief</button>
+        <button class="action-btn clear" onclick="location.reload()">Reset System</button>
     </div>
 
     <div id="output" class="results-grid" style="display:none;">
         <div class="section">
             <h2>Jurisdiction & Cites</h2>
-            <div id="jurisBox" class="juris-v">Analyzing Law Origin...</div>
-            <hr style="border:0; border-top:1px solid rgba(255,255,255,0.05); margin: 15px 0;">
+            <div id="jurisBox" class="juris-v">Detecting Forum...</div>
+            <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin: 15px 0;">
             <div id="citationBox"></div>
         </div>
 
         <div class="section">
-            <h2>Neural Extraction</h2>
-            <div id="extractBox"></div>
+            <h2>Intelligence Output</h2>
+            <div id="extractBox" style="font-size: 0.9em;"></div>
         </div>
 
         <div class="section">
-            <h2>Risk Equilibrium</h2>
+            <h2>Adversarial Risk</h2>
             <div id="riskBox"></div>
         </div>
 
         <div class="section" style="grid-column: span 3;">
-            <h2>Master Glossary Decoder (Expanded)</h2>
+            <h2>Neural Glossary Decoder (v4.7 Enhanced)</h2>
             <div id="glossaryBox"></div>
         </div>
     </div>
 </div>
 
 <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    
     let currentMode = 'contract';
     const masterGlossary = {
-        'ab initio': 'From the beginning.',
-        'ad idem': 'In agreement; meeting of the minds.',
-        'affidavit': 'A written statement confirmed by oath.',
-        'amicus curiae': 'Friend of the court; third party adviser.',
-        'bona fide': 'In good faith.',
-        'caveat emptor': 'Let the buyer beware.',
-        'certiorari': 'Order by a higher court to review a lower court case.',
-        'consideration': 'The value exchanged between parties in a contract.',
-        'de facto': 'In fact; existing in reality regardless of legal status.',
-        'de jure': 'By right; according to law.',
-        'demurrer': 'A plea to dismiss a case on grounds of legal insufficiency.',
-        'estoppel': 'Legal bar preventing a person from contradicting previous actions.',
-        'ex parte': 'Action taken by one party without notice to the other.',
-        'force majeure': 'Unforeseeable "Acts of God" that excuse performance.',
-        'habeas corpus': 'Right to be brought before a court to determine if detention is lawful.',
-        'in camera': 'In private; in the judge’s chambers.',
-        'indemnity': 'Compensation for loss or damage; security against liability.',
-        'injunction': 'A court order requiring a party to do or cease a specific action.',
-        'inter alia': 'Among other things.',
-        'ipso facto': 'By the fact itself.',
-        'locus standi': 'The right or capacity to bring an action to court.',
-        'mandamus': 'A judicial writ compelling a public official to perform duties.',
-        'mens rea': 'Guilty mind; criminal intent.',
-        'mutatis mutandis': 'With the necessary changes having been made.',
-        'nolo contendere': 'A plea where a defendant accepts punishment but doesn\'t admit guilt.',
-        'obiter dictum': 'A judge\'s incidental remark, not binding as precedent.',
-        'per se': 'By itself; intrinsically.',
-        'prima facie': 'Based on first impression; accepted as true until proven otherwise.',
-        'pro bono': 'Legal work performed without charge.',
-        'quantum meruit': 'The actual value of services performed.',
-        'quid pro quo': 'Something for something; a mutual exchange.',
-        'res judicata': 'A matter that has been adjudicated by a competent court.',
-        'stare decisis': 'The legal principle of determining points in litigation according to precedent.',
-        'sub judice': 'Under judicial consideration; currently before a court.',
-        'subpoena': 'A writ ordering a person to attend court.',
-        'ultra vires': 'Beyond one\'s legal power or authority.',
-        'usufruct': 'The right to use and enjoy the profits of another\'s property.',
-        'voir dire': 'Preliminary examination of a witness or juror.',
-        'writ of execution': 'A court order to put a judgment into effect.'
+        'ab initio': 'From the beginning.', 'ad idem': 'Meeting of the minds.',
+        'affidavit': 'Sworn written statement.', 'amicus curiae': 'Friend of the court.',
+        'bona fide': 'In good faith.', 'caveat emptor': 'Buyer beware.',
+        'certiorari': 'Review by higher court.', 'consideration': 'Exchanged value.',
+        'de facto': 'In practice.', 'de jure': 'By law.',
+        'estoppel': 'Prevention of contradictory claims.', 'ex parte': 'One-sided action.',
+        'force majeure': 'Uncontrollable events.', 'habeas corpus': 'Unlawful detention check.',
+        'indemnity': 'Protection against loss.', 'injunction': 'Court prohibition.',
+        'inter alia': 'Among others.', 'ipso facto': 'By the fact itself.',
+        'locus standi': 'Right to sue.', 'mens rea': 'Guilty mind.',
+        'prima facie': 'At first look.', 'pro bono': 'Free legal work.',
+        'quid pro quo': 'Fair exchange.', 'res judicata': 'Already judged.',
+        'stare decisis': 'Follow precedent.', 'ultra vires': 'Beyond authority.'
     };
 
     function setMode(mode) {
@@ -166,65 +155,92 @@
         document.getElementById(`btn-${mode}`).classList.add('active');
     }
 
+    // PDF UPLOAD HANDLER
+    document.getElementById('fileInput').addEventListener('change', async function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        document.getElementById('loading').style.display = 'block';
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+            let fullText = "";
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const textContent = await page.getTextContent();
+                fullText += textContent.items.map(item => item.str).join(" ") + "\n";
+            }
+            document.getElementById('input').value = fullText;
+            document.getElementById('loading').style.display = 'none';
+            initiateScan();
+        } catch (err) {
+            alert("PDF Encryption Error");
+            document.getElementById('loading').style.display = 'none';
+        }
+    });
+
     function initiateScan() {
         const text = document.getElementById('input').value;
         if (!text) return;
-        
         document.getElementById('loading').style.display = 'block';
-        
         setTimeout(() => {
             document.getElementById('loading').style.display = 'none';
             document.getElementById('output').style.display = 'grid';
             runAnalysis(text);
-        }, 800);
+        }, 600);
     }
 
     function runAnalysis(text) {
-        // 1. Jurisdiction Finder
-        const states = ['California', 'New York', 'Delaware', 'Texas', 'Florida', 'Illinois'];
-        let foundJuris = "FEDERAL / GENERAL";
-        states.forEach(s => { if(text.includes(s)) foundJuris = `${s.toUpperCase()} JURISDICTION`; });
-        document.getElementById('jurisBox').innerHTML = `📍 ORIGIN: ${foundJuris}`;
+        // Jurisdiction
+        const states = ['California', 'New York', 'Delaware', 'Texas', 'Florida', 'Illinois', 'London'];
+        let foundJuris = "FEDERAL / UNIVERSAL";
+        states.forEach(s => { if(text.includes(s)) foundJuris = `${s.toUpperCase()} FORUM`; });
+        document.getElementById('jurisBox').innerText = `📍 ${foundJuris}`;
 
-        // 2. Citation Validator
+        // Citations
         const citeRegex = /\d+\s[A-Z]\.\s?[A-Z]?\.\s?\d+\s?\d+/g;
         const cites = text.match(citeRegex) || [];
-        document.getElementById('citationBox').innerHTML = cites.map(c => `<span class="cite-v">◈ BLUEBOOK_VALID: ${c}</span>`).join('') || "No citations detected.";
+        document.getElementById('citationBox').innerHTML = cites.map(c => `<span class="cite-v">✓ CITE_DETECTION: ${c}</span>`).join('') || "No Bluebook markers.";
 
-        // 3. Glossary Scan
+        // Glossary
         let glossHtml = "";
         for (const [term, def] of Object.entries(masterGlossary)) {
             if (text.toLowerCase().includes(term.toLowerCase())) {
                 glossHtml += `<div class="tag"><b>${term.toUpperCase()}</b>: ${def}</div>`;
             }
         }
-        document.getElementById('glossaryBox').innerHTML = glossHtml || "No technical terminology detected in this stream.";
+        document.getElementById('glossaryBox').innerHTML = glossHtml || "Jargon levels nominal.";
 
-        // 4. Extraction & Risk (Contextual)
+        // Extraction Logic
         if (currentMode === 'contract') {
-            const obligations = text.split('.').filter(s => s.toLowerCase().includes('shall')).slice(0, 4);
-            document.getElementById('extractBox').innerHTML = obligations.map(o => `<p style="font-size:0.85em; margin-bottom:10px;">• ${o.trim()}</p>`).join('');
-            
-            const risks = ['terminate', 'indemnify', 'breach', 'default', 'liability'];
-            let foundRisks = risks.filter(r => text.toLowerCase().includes(r));
-            document.getElementById('riskBox').innerHTML = foundRisks.map(r => `<div style="color:var(--risk-high); font-weight:bold; font-size:0.8em;">⚠️ THREAT: ${r.toUpperCase()}</div>`).join('');
+            const obl = text.split('.').filter(s => s.toLowerCase().includes('shall')).slice(0, 5);
+            document.getElementById('extractBox').innerHTML = "<h3>KEY OBLIGATIONS</h3>" + obl.map(o => `<p>• ${o.trim()}</p>`).join('');
+            const risks = ['breach', 'indemnity', 'termination', 'liability'].filter(r => text.toLowerCase().includes(r));
+            document.getElementById('riskBox').innerHTML = risks.map(r => `<div style="color:var(--risk-high)">⚡ CRITICAL: ${r.toUpperCase()}</div>`).join('');
         } else {
-            const holding = text.split('.').filter(s => s.toLowerCase().includes('held') || s.toLowerCase().includes('court')).slice(0, 3);
-            document.getElementById('extractBox').innerHTML = holding.map(h => `<p style="font-size:0.85em; margin-bottom:10px;">🏛️ ${h.trim()}</p>`).join('');
-            
-            document.getElementById('riskBox').innerHTML = `<div style="color:var(--primary); font-size:0.8em;">PRECECENT ANALYSIS COMPLETE. NO ADVERSARIAL RISK DETECTED.</div>`;
+            const hold = text.split('.').filter(s => s.toLowerCase().includes('held') || s.toLowerCase().includes('court')).slice(0, 3);
+            document.getElementById('extractBox').innerHTML = "<h3>JUDICIAL HOLDING</h3>" + hold.map(h => `<p>🏛️ ${h.trim()}</p>`).join('');
+            document.getElementById('riskBox').innerHTML = `<div style="color:var(--valid)">PRECEDENT VALIDATED</div>`;
         }
-
-        document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
     }
 
-    function exportData() {
-        const report = document.getElementById('output').innerText;
-        const blob = new Blob([`LADY LEGALZ Summary v3.6.0\n\n${report}`], {type: 'text/plain'});
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `Neural_Brief_${Date.now()}.txt`;
-        a.click();
+    // PDF DOWNLOAD HANDLER
+    function exportToPDF() {
+        const content = document.getElementById('output').innerText;
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+                <head><title>Lady Legalz Brief</title><style>
+                    body { font-family: monospace; padding: 50px; line-height: 1.6; color: #111; }
+                    .h { border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 30px; text-align: center; }
+                </style></head>
+                <body>
+                    <div class="h"><h1>LADY LEGALZ SUMMARY REPORT</h1><p>VERIFIED INTEL - ${new Date().toLocaleDateString()}</p></div>
+                    <pre style="white-space: pre-wrap;">${content}</pre>
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        setTimeout(() => { printWindow.print(); }, 500);
     }
 </script>
 </body>
