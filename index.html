@@ -220,7 +220,7 @@
 
     function exportData() {
         const report = document.getElementById('output').innerText;
-        const blob = new Blob([`LADY LEGALZ NEURAL EXPORT v4.6.0\n\n${report}`], {type: 'text/plain'});
+        const blob = new Blob([`LADY LEGALZ Summary v3.6.0\n\n${report}`], {type: 'text/plain'});
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = `Neural_Brief_${Date.now()}.txt`;
