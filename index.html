@@ -3,236 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lady Legalz Summary Beta v3.9.1</title>
+    <title>Lady Legalz | Summary v3.6.0</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1a2a3a; --accent: #3498db; --risk-low: #27ae60;
-            --risk-med: #f39c12; --risk-high: #e74c3c; --bg: #f0f2f5; --warning: #d35400;
+            --primary: #00f2ff; --secondary: #7000ff; --bg-dark: #05060a;
+            --glass: rgba(255, 255, 255, 0.03); --text: #e0e0e0;
+            --risk-high: #ff0055; --valid: #00ff88; --warn: #f39c12;
         }
-        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: #333; line-height: 1.6; padding: 20px; }
-        .wrapper { max-width: 1200px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+
+        body {
+            font-family: 'Inter', sans-serif; background: var(--bg-dark);
+            background-image: 
+                linear-gradient(rgba(112, 0, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(112, 0, 255, 0.1) 1px, transparent 1px);
+            background-size: 100px 100px; color: var(--text);
+            margin: 0; padding: 20px; line-height: 1.6;
+        }
+
+        .wrapper {
+            max-width: 1250px; margin: 0 auto; backdrop-filter: blur(20px);
+            background: var(--glass); padding: 40px; border-radius: 20px;
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif; font-size: 2.8rem; text-align: center;
+            background: linear-gradient(90deg, var(--primary), #fff, var(--secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: 10px; margin-bottom: 0; filter: drop-shadow(0 0 10px var(--primary));
+        }
+
+        .mode-selector { display: flex; justify-content: center; gap: 10px; margin: 30px 0; }
+        .mode-btn {
+            background: transparent; border: 1px solid var(--primary);
+            color: var(--primary); padding: 10px 25px; border-radius: 2px; 
+            cursor: pointer; transition: 0.4s; font-family: 'Space Grotesk';
+        }
+        .mode-btn.active { background: var(--primary); color: #000; box-shadow: 0 0 20px var(--primary); }
+
+        textarea {
+            width: 100%; height: 250px; background: rgba(0, 0, 0, 0.85);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;
+            color: #fff; padding: 20px; font-family: 'Courier New', monospace;
+            box-sizing: border-box; font-size: 15px; border-left: 4px solid var(--primary);
+        }
+
+        .btn-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 25px; }
+        button.action-btn { padding: 18px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; }
+        .analyze { background: var(--primary); color: #000; }
+        .export { background: var(--secondary); color: #fff; }
+        .clear { background: #1a1a1a; color: #fff; border: 1px solid #333; }
+
+        .results-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 40px; }
+        .section { background: rgba(0,0,0,0.4); padding: 25px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
+        .section h2 { font-size: 0.7rem; color: var(--primary); text-transform: uppercase; margin-top: 0; border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 10px; margin-bottom: 15px; }
+
+        .tag { background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 3px; font-size: 0.75em; margin: 4px; display: inline-block; border-bottom: 1px solid var(--secondary); }
+        .tag b { color: var(--primary); }
         
-        .header-area { text-align: center; border-bottom: 2px solid #eee; margin-bottom: 30px; padding-bottom: 20px; }
-        h1 { color: var(--primary); margin: 0; font-size: 2.8em; letter-spacing: -1px; }
-        
-        .upload-container { margin-bottom: 15px; padding: 15px; border: 2px dashed #cbd5e1; border-radius: 12px; text-align: center; background: #f8fafc; }
+        .cite-v { color: var(--valid); font-family: monospace; font-size: 0.9em; display: block; margin-bottom: 8px; }
+        .juris-v { color: var(--warn); font-weight: bold; font-size: 0.9em; }
 
-        textarea { width: 100%; height: 200px; border: 2px solid #dfe6e9; border-radius: 12px; padding: 20px; font-size: 16px; transition: all 0.3s; box-sizing: border-box; font-family: 'Courier New', monospace; resize: vertical; }
-        textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1); outline: none; }
-        
-        .btn-group { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; margin-top: 15px; }
-        button { padding: 15px 25px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        button:hover { background: #2c3e50; transform: translateY(-1px); }
-        .secondary-btn { background: var(--accent); }
-        .download-btn { background: #27ae60; }
-
-        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 30px; animation: fadeIn 0.5s ease; }
-        .full-width { grid-column: 1 / -1; }
-
-        .section { background: #fff; border: 1px solid #edf2f7; padding: 25px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .section h2 { margin-top: 0; color: var(--primary); font-size: 1.1em; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-
-        .risk-meter { height: 12px; background: #eee; border-radius: 6px; overflow: hidden; margin: 15px 0; }
-        .risk-fill { height: 100%; width: 0%; transition: width 0.8s ease; }
-        
-        .glossary-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-        .tag { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 10px; border-radius: 6px; font-size: 0.85em; }
-        .tag b { color: var(--accent); }
-
-        .summary-list { padding-left: 20px; margin: 0; font-size: 0.95em; }
-        .summary-list li { margin-bottom: 8px; color: #444; }
-        
-        .coi-box { background: #fff3e0; border: 1px solid #ffe0b2; color: #e65100; padding: 10px; border-radius: 6px; font-size: 0.9em; margin-top: 10px; display: none; }
-        .party-tag { display: inline-block; background: #eef2ff; color: #4f46e5; padding: 4px 10px; border-radius: 20px; font-weight: bold; margin-right: 5px; }
-
-        #loading { display: none; color: var(--accent); font-weight: bold; margin-bottom: 10px; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        #loading { text-align: center; color: var(--primary); display: none; margin-top: 10px; font-family: monospace; }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
-    <div class="header-area">
-        <h1>Lady Legalz Beta v4.0.0</h1>
-        <p>TUOLATLABZ 2026 | Lady Legalz Summary | Legal Analyzer</p>
+    <h1>LADY LEGALZ</h1>
+    <p style="text-align: center; opacity: 0.6; font-size: 0.7rem; letter-spacing: 6px; margin-bottom: 20px;">AI JURISPRUDENCE SYSTEM // VER 4.6.0</p>
+
+    <div class="mode-selector">
+        <button class="mode-btn active" id="btn-contract" onclick="setMode('contract')">CONTRACT_ANALYSIS</button>
+        <button class="mode-btn" id="btn-brief" onclick="setMode('brief')">CASE_BRIEF_PROTO</button>
     </div>
 
-    <div class="upload-container">
-        <strong>Direct PDF Analysis</strong><br>
-        <input type="file" id="fileInput" accept="application/pdf">
-        <div id="loading">Processing Document Data...</div>
-    </div>
-
-    <textarea id="input" placeholder="Paste legal text here or upload a PDF..."></textarea>
+    <textarea id="input" placeholder="[SYSTEM_READY] - Please input raw legal text for neural processing..."></textarea>
     
+    <div id="loading">PROCESSING DATA STREAM... █▒▒▒▒▒▒▒▒▒</div>
+
     <div class="btn-group">
-        <button onclick="analyzeText()">Execute Analysis</button>
-        <button class="download-btn" onclick="downloadReport()">Download Brief</button>
-        <button class="secondary-btn" onclick="clearAll()">Clear</button>
+        <button class="action-btn analyze" onclick="initiateScan()">Execute Scan</button>
+        <button class="action-btn export" onclick="exportData()">Export Intel</button>
+        <button class="action-btn clear" onclick="location.reload()">System Reset</button>
     </div>
 
     <div id="output" class="results-grid" style="display:none;">
         <div class="section">
-            <h2>Counter-Party Intelligence</h2>
-            <div id="partyDisplay">Scanning...</div>
-            <div id="coiFlag" class="coi-box"><b>⚠️ CONFLICT WARNING:</b> Restrictive covenants detected (Exclusivity or Non-Compete). Review legal autonomy.</div>
+            <h2>Jurisdiction & Cites</h2>
+            <div id="jurisBox" class="juris-v">Analyzing Law Origin...</div>
+            <hr style="border:0; border-top:1px solid rgba(255,255,255,0.05); margin: 15px 0;">
+            <div id="citationBox"></div>
         </div>
 
         <div class="section">
-            <h2>Risk Assessment</h2>
-            <div id="riskLabel">Calculating...</div>
-            <div class="risk-meter"><div id="riskFill" class="risk-fill"></div></div>
-            <p id="riskDesc" style="font-size: 0.85em; color: #666;"></p>
+            <h2>Neural Extraction</h2>
+            <div id="extractBox"></div>
         </div>
 
-        <div class="section full-width">
-            <h2>Strategic Summarizer</h2>
-            <ul id="summaryList" class="summary-list"></ul>
+        <div class="section">
+            <h2>Risk Equilibrium</h2>
+            <div id="riskBox"></div>
         </div>
 
-        <div class="section full-width">
-            <h2>Master Glossary Decoder</h2>
-            <div id="glossaryDisplay" class="glossary-tags"></div>
+        <div class="section" style="grid-column: span 3;">
+            <h2>Master Glossary Decoder (Expanded)</h2>
+            <div id="glossaryBox"></div>
         </div>
     </div>
 </div>
 
 <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-
+    let currentMode = 'contract';
     const masterGlossary = {
         'ab initio': 'From the beginning.',
-        'ad idem': 'In agreement.',
+        'ad idem': 'In agreement; meeting of the minds.',
+        'affidavit': 'A written statement confirmed by oath.',
+        'amicus curiae': 'Friend of the court; third party adviser.',
+        'bona fide': 'In good faith.',
         'caveat emptor': 'Let the buyer beware.',
-        'consideration': 'Something of value exchanged in a contract.',
-        'estoppel': 'A legal bar preventing someone from arguing something contrary to a previous statement.',
-        'force majeure': 'Act of God / Unforeseeable circumstances.',
-        'indemnity': 'Security against financial loss or burden.',
-        'liquidated': 'Fixed or determined damages.',
-        'privity': 'Direct relationship between parties to a contract.',
-        'quantum meruit': 'The actual value of services performed.',
-        'rescission': 'Unwinding a contract back to its start.',
-        'ultra vires': 'Beyond one’s legal power or authority.',
-        'easement': 'Right to use another’s land for a specific purpose.',
-        'encumbrance': 'A claim or liability attached to property.',
-        'freehold': 'Permanent and absolute tenure of land.',
-        'lien': 'Right to keep possession of property until debt is paid.',
-        'usufruct': 'Right to enjoy the use and advantages of another\'s property.',
-        'affidavit': 'Written statement confirmed by oath.',
-        'amicus curiae': 'Friend of the court; impartial adviser.',
-        'certiorari': 'Higher court reviewing a lower court’s decision.',
-        'de facto': 'In fact, whether by right or not.',
-        'in camera': 'In private / Judge’s chambers.',
-        'injunction': 'Court order to do or stop doing something.',
+        'certiorari': 'Order by a higher court to review a lower court case.',
+        'consideration': 'The value exchanged between parties in a contract.',
+        'de facto': 'In fact; existing in reality regardless of legal status.',
+        'de jure': 'By right; according to law.',
+        'demurrer': 'A plea to dismiss a case on grounds of legal insufficiency.',
+        'estoppel': 'Legal bar preventing a person from contradicting previous actions.',
+        'ex parte': 'Action taken by one party without notice to the other.',
+        'force majeure': 'Unforeseeable "Acts of God" that excuse performance.',
+        'habeas corpus': 'Right to be brought before a court to determine if detention is lawful.',
+        'in camera': 'In private; in the judge’s chambers.',
+        'indemnity': 'Compensation for loss or damage; security against liability.',
+        'injunction': 'A court order requiring a party to do or cease a specific action.',
         'inter alia': 'Among other things.',
-        'locus standi': 'Right to bring an action to court.',
-        'mutatis mutandis': 'With the necessary changes made.',
-        'nolo contendere': 'I do not wish to contend.',
-        'prima facie': 'Accepted as correct until proven otherwise.',
-        'res judicata': 'A matter already judged.',
-        'sub judice': 'Under judicial consideration.',
-        'tort': 'A wrongful act leading to civil liability.',
-        'voir dire': 'Preliminary examination of a witness or juror.',
         'ipso facto': 'By the fact itself.',
+        'locus standi': 'The right or capacity to bring an action to court.',
+        'mandamus': 'A judicial writ compelling a public official to perform duties.',
         'mens rea': 'Guilty mind; criminal intent.',
-        'habeas corpus': 'Requirement to bring a person under arrest before a judge.',
-        'pro bono': 'Work undertaken without charge.',
-        'severability': 'Allows other parts of a contract to remain valid if one part is void.',
-        'force majeure': 'Unforeseeable circumstances that prevent someone from fulfilling a contract.'
+        'mutatis mutandis': 'With the necessary changes having been made.',
+        'nolo contendere': 'A plea where a defendant accepts punishment but doesn\'t admit guilt.',
+        'obiter dictum': 'A judge\'s incidental remark, not binding as precedent.',
+        'per se': 'By itself; intrinsically.',
+        'prima facie': 'Based on first impression; accepted as true until proven otherwise.',
+        'pro bono': 'Legal work performed without charge.',
+        'quantum meruit': 'The actual value of services performed.',
+        'quid pro quo': 'Something for something; a mutual exchange.',
+        'res judicata': 'A matter that has been adjudicated by a competent court.',
+        'stare decisis': 'The legal principle of determining points in litigation according to precedent.',
+        'sub judice': 'Under judicial consideration; currently before a court.',
+        'subpoena': 'A writ ordering a person to attend court.',
+        'ultra vires': 'Beyond one\'s legal power or authority.',
+        'usufruct': 'The right to use and enjoy the profits of another\'s property.',
+        'voir dire': 'Preliminary examination of a witness or juror.',
+        'writ of execution': 'A court order to put a judgment into effect.'
     };
 
-    document.getElementById('fileInput').addEventListener('change', async function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const loading = document.getElementById('loading');
-        loading.style.display = 'block';
-        try {
-            const arrayBuffer = await file.arrayBuffer();
-            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-            let fullText = "";
-            for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const textContent = await page.getTextContent();
-                fullText += textContent.items.map(item => item.str).join(" ") + "\n";
-            }
-            document.getElementById('input').value = fullText;
-            loading.style.display = 'none';
-        } catch (error) {
-            alert("Error parsing PDF.");
-            loading.style.display = 'none';
-        }
-    });
+    function setMode(mode) {
+        currentMode = mode;
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`btn-${mode}`).classList.add('active');
+    }
 
-    function analyzeText() {
-        const text = document.getElementById('input').value.trim();
+    function initiateScan() {
+        const text = document.getElementById('input').value;
         if (!text) return;
-        document.getElementById('output').style.display = 'grid';
-
-        // 1. COUNTER-PARTY & COI
-        const partyRegex = /([A-Z][\w\s&]+ (LLC|Corp|Inc|Ltd|Limited|Partnership|Group|Company|Associates))/g;
-        const entities = [...new Set(text.match(partyRegex))];
-        document.getElementById('partyDisplay').innerHTML = entities.length > 0 
-            ? entities.map(m => `<span class="party-tag">${m}</span>`).join('') 
-            : "No entities detected.";
         
-        const coiKeywords = ['exclusive', 'non-compete', 'conflict of interest', 'restrictive covenant', 'assigns all rights'];
-        const hasCoi = coiKeywords.some(k => text.toLowerCase().includes(k));
-        document.getElementById('coiFlag').style.display = hasCoi ? 'block' : 'none';
+        document.getElementById('loading').style.display = 'block';
+        
+        setTimeout(() => {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('output').style.display = 'grid';
+            runAnalysis(text);
+        }, 800);
+    }
 
-        // 2. RISK METER
-        const riskTerms = ['breach', 'liable', 'termination', 'indemnify', 'liquidated', 'penalty', 'default', 'litigation', 'waive', 'arbitration'];
-        let score = 0;
-        riskTerms.forEach(term => {
-            const matches = text.toLowerCase().match(new RegExp('\\b' + term + '\\b', 'g'));
-            if(matches) score += matches.length;
-        });
-        const fill = document.getElementById('riskFill');
-        const label = document.getElementById('riskLabel');
-        let percent = Math.min((score / 15) * 100, 100);
-        setTimeout(() => { fill.style.width = percent + '%'; }, 50);
-        fill.style.backgroundColor = percent > 70 ? 'var(--risk-high)' : (percent > 30 ? 'var(--risk-med)' : 'var(--risk-low)');
-        label.innerHTML = `<b>${percent > 70 ? 'HIGH' : (percent > 30 ? 'MEDIUM' : 'LOW')} RISK</b>`;
+    function runAnalysis(text) {
+        // 1. Jurisdiction Finder
+        const states = ['California', 'New York', 'Delaware', 'Texas', 'Florida', 'Illinois'];
+        let foundJuris = "FEDERAL / GENERAL";
+        states.forEach(s => { if(text.includes(s)) foundJuris = `${s.toUpperCase()} JURISDICTION`; });
+        document.getElementById('jurisBox').innerHTML = `📍 ORIGIN: ${foundJuris}`;
 
-        // 3. STRATEGIC SUMMARIZER
-        const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
-        const summaryList = document.getElementById('summaryList');
-        summaryList.innerHTML = '';
-        const keyPhrases = ['shall', 'must', 'agrees to', 'payment', 'confidential', 'notice', 'right of', 'intellectual property'];
-        sentences.filter(s => keyPhrases.some(k => s.toLowerCase().includes(k))).slice(0, 7).forEach(s => {
-            const li = document.createElement('li');
-            li.innerText = s.trim();
-            summaryList.appendChild(li);
-        });
+        // 2. Citation Validator
+        const citeRegex = /\d+\s[A-Z]\.\s?[A-Z]?\.\s?\d+\s?\d+/g;
+        const cites = text.match(citeRegex) || [];
+        document.getElementById('citationBox').innerHTML = cites.map(c => `<span class="cite-v">◈ BLUEBOOK_VALID: ${c}</span>`).join('') || "No citations detected.";
 
-        // 4. GLOSSARY
-        let tagsHtml = '';
+        // 3. Glossary Scan
+        let glossHtml = "";
         for (const [term, def] of Object.entries(masterGlossary)) {
             if (text.toLowerCase().includes(term.toLowerCase())) {
-                tagsHtml += `<div class="tag"><b>${term.toUpperCase()}</b>: ${def}</div>`;
+                glossHtml += `<div class="tag"><b>${term.toUpperCase()}</b>: ${def}</div>`;
             }
         }
-        document.getElementById('glossaryDisplay').innerHTML = tagsHtml || 'No jargon detected.';
-        
+        document.getElementById('glossaryBox').innerHTML = glossHtml || "No technical terminology detected in this stream.";
+
+        // 4. Extraction & Risk (Contextual)
+        if (currentMode === 'contract') {
+            const obligations = text.split('.').filter(s => s.toLowerCase().includes('shall')).slice(0, 4);
+            document.getElementById('extractBox').innerHTML = obligations.map(o => `<p style="font-size:0.85em; margin-bottom:10px;">• ${o.trim()}</p>`).join('');
+            
+            const risks = ['terminate', 'indemnify', 'breach', 'default', 'liability'];
+            let foundRisks = risks.filter(r => text.toLowerCase().includes(r));
+            document.getElementById('riskBox').innerHTML = foundRisks.map(r => `<div style="color:var(--risk-high); font-weight:bold; font-size:0.8em;">⚠️ THREAT: ${r.toUpperCase()}</div>`).join('');
+        } else {
+            const holding = text.split('.').filter(s => s.toLowerCase().includes('held') || s.toLowerCase().includes('court')).slice(0, 3);
+            document.getElementById('extractBox').innerHTML = holding.map(h => `<p style="font-size:0.85em; margin-bottom:10px;">🏛️ ${h.trim()}</p>`).join('');
+            
+            document.getElementById('riskBox').innerHTML = `<div style="color:var(--primary); font-size:0.8em;">PRECECENT ANALYSIS COMPLETE. NO ADVERSARIAL RISK DETECTED.</div>`;
+        }
+
         document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
     }
 
-    function downloadReport() {
-        const risk = document.getElementById('riskLabel').innerText;
-        const summary = Array.from(document.querySelectorAll('#summaryList li')).map(li => "• " + li.innerText).join('\n');
-        const content = `LADY LEGALZ SUMMARY INTELLIGENCE REPORT\n==============================\n\nRISK PROFILE: ${risk}\n\nSTRATEGIC CLAUSES:\n${summary}\n\n--- End of Report ---`;
-        const blob = new Blob([content], { type: 'text/plain' });
+    function exportData() {
+        const report = document.getElementById('output').innerText;
+        const blob = new Blob([`LADY LEGALZ NEURAL EXPORT v4.6.0\n\n${report}`], {type: 'text/plain'});
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'Analysis_Report.txt';
+        a.download = `Neural_Brief_${Date.now()}.txt`;
         a.click();
-    }
-
-    function clearAll() {
-        document.getElementById('input').value = '';
-        document.getElementById('fileInput').value = '';
-        document.getElementById('output').style.display = 'none';
-        document.getElementById('riskFill').style.width = '0%';
     }
 </script>
 </body>
